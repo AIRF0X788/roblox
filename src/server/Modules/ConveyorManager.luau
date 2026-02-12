@@ -343,19 +343,29 @@ function ConveyorManager.TryBuyBox(player: Player, boxId: string)
 	-- Remove box from belt
 	removeBox(player, boxId, "purchased")
 	
-	-- TRIGGER LOOTBOX ANIMATION before updating UI
-	local lootboxEvent = RemoteSetup.GetEvent(RemoteNames.Events.OpenLootbox)
-	if lootboxEvent then
-		lootboxEvent:FireClient(player, {
-			BoxName = targetBox.BoxName,
-			WonBrainrots = spawnedBrainrots,
-		})
-	end
-	
-	-- Small delay to let animation play (5 seconds spin + 2 seconds result display)
-	task.wait(7)
+	-- TRIGGER LOOTBOX ANIMATION (non-blocking)
+	task.spawn(function()
+		local lootboxEvent = RemoteSetup.GetEvent(RemoteNames.Events.OpenLootbox)
+		if lootboxEvent then
+			lootboxEvent:FireClient(player, {
+				BoxName = targetBox.BoxName,
+				WonBrainrots = spawnedBrainrots,
+			})
+		end
+		
+		-- Wait for animation to complete before spawning visuals (7 seconds)
+		task.wait(7)
+		
+		-- Spawn brainrot visuals in the base
+		local spawnVisualEvent = RemoteSetup.GetEvent(RemoteNames.Events.SpawnBrainrotVisual)
+		if spawnVisualEvent then
+			for _, brainrot in ipairs(spawnedBrainrots) do
+				spawnVisualEvent:FireClient(player, brainrot)
+			end
+		end
+	end)
 
-	-- Update client
+	-- Update client immediately (don't wait for animation)
 	local moneyEvent = RemoteSetup.GetEvent(RemoteNames.Events.UpdateMoney)
 	if moneyEvent then
 		moneyEvent:FireClient(player, DataManager.GetMoney(player))
@@ -374,14 +384,6 @@ function ConveyorManager.TryBuyBox(player: Player, boxId: string)
 			Rarity = targetBox.Rarity,
 			Brainrots = spawnedBrainrots,
 		})
-	end
-
-	-- Spawn brainrot visuals
-	local spawnVisualEvent = RemoteSetup.GetEvent(RemoteNames.Events.SpawnBrainrotVisual)
-	if spawnVisualEvent then
-		for _, brainrot in ipairs(spawnedBrainrots) do
-			spawnVisualEvent:FireClient(player, brainrot)
-		end
 	end
 end
 
