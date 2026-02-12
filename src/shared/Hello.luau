@@ -1,10 +1,7 @@
--- src/shared/Hello.luau
+-- This module is no longer used.
+-- See Shared.Modules for all game configuration.
 local Hello = {}
-
 function Hello.greet()
-    print("🎮 Salut depuis Roblox Studio!")
-    print("⚡ Cette modification vient de VS Code!")
-    print("🔄 Synchronisation en temps réel active!")
+	print("BrainrotBoxes - Box Opening Game!")
 end
-
 return Hello
