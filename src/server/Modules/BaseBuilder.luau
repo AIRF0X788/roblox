@@ -215,6 +215,59 @@ function BaseBuilder.CreateBase(player: Player): Model
 	levelLabel.BackgroundTransparency = 1
 	levelLabel.Font = Enum.Font.GothamBold
 	levelLabel.Parent = surfaceGui
+	
+	-- === MONEY COLLECTOR ===
+	-- Platform where players click to collect money from their brainrots
+	local collectorPlatform = Instance.new("Part")
+	collectorPlatform.Name = "MoneyCollector"
+	collectorPlatform.Size = Vector3.new(8, 1, 8)
+	collectorPlatform.Position = basePosition + Vector3.new(25, 0.5, 25)
+	collectorPlatform.Anchored = true
+	collectorPlatform.CanCollide = true
+	collectorPlatform.BrickColor = BrickColor.new("Bright yellow")
+	collectorPlatform.Material = Enum.Material.Neon
+	collectorPlatform.TopSurface = Enum.SurfaceType.Smooth
+	collectorPlatform.Parent = baseModel
+	
+	-- Collector sign
+	local collectorSign = Instance.new("Part")
+	collectorSign.Name = "CollectorSign"
+	collectorSign.Size = Vector3.new(8, 4, 0.5)
+	collectorSign.Position = basePosition + Vector3.new(25, 4, 25)
+	collectorSign.Anchored = true
+	collectorSign.CanCollide = false
+	collectorSign.BrickColor = BrickColor.new("Really black")
+	collectorSign.Material = Enum.Material.SmoothPlastic
+	collectorSign.Parent = baseModel
+	
+	local collectorGui = Instance.new("SurfaceGui")
+	collectorGui.Face = Enum.NormalId.Front
+	collectorGui.Parent = collectorSign
+	
+	local collectorTitle = Instance.new("TextLabel")
+	collectorTitle.Size = UDim2.new(1, 0, 0.5, 0)
+	collectorTitle.Text = "💰 MONEY COLLECTOR"
+	collectorTitle.TextColor3 = Color3.fromRGB(255, 215, 0)
+	collectorTitle.TextScaled = true
+	collectorTitle.BackgroundTransparency = 1
+	collectorTitle.Font = Enum.Font.GothamBold
+	collectorTitle.Parent = collectorGui
+	
+	local collectorInfo = Instance.new("TextLabel")
+	collectorInfo.Name = "PendingMoneyLabel"
+	collectorInfo.Size = UDim2.new(1, 0, 0.5, 0)
+	collectorInfo.Position = UDim2.new(0, 0, 0.5, 0)
+	collectorInfo.Text = "Click to collect: $0"
+	collectorInfo.TextColor3 = Color3.fromRGB(100, 255, 100)
+	collectorInfo.TextScaled = true
+	collectorInfo.BackgroundTransparency = 1
+	collectorInfo.Font = Enum.Font.Gotham
+	collectorInfo.Parent = collectorGui
+	
+	-- Click detector for collection
+	local clickDetector = Instance.new("ClickDetector")
+	clickDetector.MaxActivationDistance = 20
+	clickDetector.Parent = collectorPlatform
 
 	-- Set primary part and parent
 	baseModel.PrimaryPart = floor
@@ -262,6 +315,30 @@ function BaseBuilder.GetBrainrotAreaCenter(player: Player): Vector3?
 		end
 	end
 	return nil
+end
+
+function BaseBuilder.GetMoneyCollector(player: Player): Part?
+	local base = BaseBuilder.GetBase(player)
+	if base then
+		return base:FindFirstChild("MoneyCollector")
+	end
+	return nil
+end
+
+function BaseBuilder.UpdatePendingMoney(player: Player, amount: number)
+	local base = BaseBuilder.GetBase(player)
+	if base then
+		local sign = base:FindFirstChild("CollectorSign")
+		if sign then
+			local gui = sign:FindFirstChild("SurfaceGui")
+			if gui then
+				local label = gui:FindFirstChild("PendingMoneyLabel")
+				if label then
+					label.Text = "Click to collect: $" .. tostring(amount)
+				end
+			end
+		end
+	end
 end
 
 function BaseBuilder.UpdateLevelSign(player: Player, level: number)

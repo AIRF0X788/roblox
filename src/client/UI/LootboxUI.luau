@@ -62,12 +62,15 @@ local function playSound(soundId: string, volume: number?)
 	return sound
 end
 
--- Sound IDs (using Roblox default sounds - you can replace these)
+-- Sound IDs (CS:GO-style sounds - you can find these on Roblox Toolbox/Library)
+-- Search for: "CS:GO case opening", "lootbox spin", "roulette spin"
+-- Recommended: Upload your own CS:GO sounds for best quality
 local SOUNDS = {
-	Spin = "rbxasset://sounds/electronicpingshort.wav",  -- Replace with your spin sound
-	Stop = "rbxasset://sounds/button.wav",  -- Replace with stop/tick sound
-	Reveal = "rbxasset://sounds/victory.wav",  -- Replace with reveal sound
-	Rare = "rbxasset://sounds/uuhhh.wav",  -- Replace with rare item sound
+	-- CS:GO Case Opening Sounds (placeholders - replace with real Asset IDs)
+	Spin = "rbxassetid://160062913",     -- Roulette/spinning sound (search "roulette spin")
+	Stop = "rbxassetid://421058860",     -- Click/stop sound (search "case stop")
+	Reveal = "rbxassetid://3398620867",   -- Item reveal sound (search "item drop")
+	Rare = "rbxassetid://9125644454",     -- Rare item sound (search "knife drop" or "rare drop")
 }
 
 ------------------------------------------------------------
@@ -237,6 +240,10 @@ local function populateItems(wonBrainrots: {any})
 	-- Generate random brainrots for the carousel
 	local displayItems = {}
 	
+	-- Calculate stop position (45th item will be centered)
+	-- This ensures smooth animation and accurate landing
+	local stopIndex = 45
+	
 	-- Fill with random items
 	for i = 1, TOTAL_DISPLAY_ITEMS do
 		local randomBrainrot = GameConfig.Brainrots[math.random(1, #GameConfig.Brainrots)]
@@ -248,10 +255,10 @@ local function populateItems(wonBrainrots: {any})
 		})
 	end
 	
-	-- Place the actual won brainrots near the end (where the spin will stop)
-	local stopIndex = TOTAL_DISPLAY_ITEMS - 5  -- 5 items before the end
-	for i, brainrot in ipairs(wonBrainrots) do
-		displayItems[stopIndex + i - 1] = brainrot
+	-- Replace the item at stopIndex with the FIRST won brainrot
+	-- (For multiple brainrots, only show the first one in the animation)
+	if #wonBrainrots > 0 then
+		displayItems[stopIndex] = wonBrainrots[1]
 	end
 	
 	-- Create cards
@@ -259,7 +266,7 @@ local function populateItems(wonBrainrots: {any})
 		createItemCard(item, i - 1)
 	end
 	
-	return stopIndex
+	return stopIndex  -- Return the exact index where animation will stop
 end
 
 ------------------------------------------------------------
@@ -269,9 +276,10 @@ end
 local function animateSpin(stopIndex: number, callback: () -> ())
 	isAnimating = true
 	
-	-- Calculate stop position (center the winning item)
+	-- Calculate stop position to CENTER the winning item on the indicator line
 	local viewportCenter = viewportFrame.AbsoluteSize.X / 2
-	local stopPosition = -(stopIndex * (ITEM_WIDTH + ITEM_SPACING)) + viewportCenter - (ITEM_WIDTH / 2)
+	-- Position the stopIndex item so its CENTER aligns with the viewport center
+	local stopPosition = -(stopIndex * (ITEM_WIDTH + ITEM_SPACING) + (ITEM_WIDTH / 2)) + viewportCenter
 	
 	-- Play spin sound
 	local spinSound = playSound(SOUNDS.Spin, 0.3)
@@ -279,16 +287,16 @@ local function animateSpin(stopIndex: number, callback: () -> ())
 	-- Initial fast scroll
 	local startTime = tick()
 	local initialSpeed = 2000  -- Pixels per second
-	local deceleration = 400  -- Deceleration rate
 	
 	local currentPos = 0
+	local targetReached = false
 	
 	-- Animation loop
 	currentConnection = RunService.RenderStepped:Connect(function()
 		local elapsed = tick() - startTime
 		
 		if elapsed >= SPIN_DURATION then
-			-- Stop animation
+			-- Ensure we're at exact stop position
 			itemsFrame.Position = UDim2.new(0, stopPosition, 0, 0)
 			
 			if currentConnection then
@@ -304,6 +312,7 @@ local function animateSpin(stopIndex: number, callback: () -> ())
 			
 			task.wait(0.3)
 			isAnimating = false
+			targetReached = true
 			
 			if callback then
 				callback()
@@ -312,26 +321,23 @@ local function animateSpin(stopIndex: number, callback: () -> ())
 			return
 		end
 		
-		-- Calculate speed with deceleration
-		local timeRemaining = SPIN_DURATION - elapsed
-		local speed = math.max(50, initialSpeed * (timeRemaining / SPIN_DURATION))
+		-- Calculate progress (0 to 1)
+		local progress = elapsed / SPIN_DURATION
 		
-		-- Update position
-		currentPos = currentPos - (speed * (1/60))  -- 60 FPS assumption
+		-- Ease-out cubic for smooth deceleration
+		local easedProgress = 1 - math.pow(1 - progress, 3)
 		
-		-- Add slight bounce effect near the end
-		if timeRemaining < 0.5 then
-			local bounce = math.sin(elapsed * 20) * 2
+		-- Interpolate from 0 to stopPosition
+		currentPos = stopPosition * easedProgress
+		
+		-- Add slight bounce effect in last 0.5 seconds
+		if elapsed > SPIN_DURATION - 0.5 and elapsed < SPIN_DURATION - 0.1 then
+			local bounceProgress = (elapsed - (SPIN_DURATION - 0.5)) / 0.4
+			local bounce = math.sin(bounceProgress * math.pi * 4) * 5 * (1 - bounceProgress)
 			currentPos = currentPos + bounce
 		end
 		
 		itemsFrame.Position = UDim2.new(0, currentPos, 0, 0)
-		
-		-- Adjust to final position
-		if elapsed > SPIN_DURATION * 0.9 then
-			local alpha = (elapsed - SPIN_DURATION * 0.9) / (SPIN_DURATION * 0.1)
-			currentPos = currentPos * (1 - alpha) + stopPosition * alpha
-		end
 	end)
 end
 

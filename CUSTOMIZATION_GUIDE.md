@@ -220,3 +220,196 @@ Sounds:     src/client/UI/LootboxUI.luau (line ~35-40)
 ---
 
 **Happy Customizing!** 🎉
+
+---
+
+## 🎭 Adding 3D Models for Brainrots
+
+### Why Use 3D Models?
+Instead of simple colored spheres, you can use actual 3D character models from the Roblox Toolbox to make your Brainrots look awesome!
+
+### How to Find Models
+
+1. **Open Roblox Studio**
+2. **Click Toolbox** (View → Toolbox)
+3. **Search for models**:
+   - "skibidi toilet"
+   - "sigma male"
+   - "meme character"
+   - "funny character"
+   - "brainrot"
+   - Or any character name from your Brainrot list
+
+### Adding Models to Your Game
+
+#### Method 1: Use Asset IDs (Recommended)
+1. Find a model in Toolbox
+2. Right-click → "Copy Asset ID"
+3. Open `GameConfig.luau`
+4. Replace `ModelId = "rbxassetid://0"` with your Asset ID
+5. Example: `ModelId = "rbxassetid://123456789"`
+
+#### Method 2: Insert Directly
+1. Drag model from Toolbox into Workspace
+2. Place in ServerStorage folder called "BrainrotModels"
+3. Name it exactly as the Brainrot name (e.g., "Skibidi Toilet")
+4. The game will automatically use it
+
+### Model Requirements
+- **Size**: Ideally 2-4 studs tall
+- **Anchored**: Should be unanchored (game will anchor it)
+- **PrimaryPart**: Should have a PrimaryPart set
+- **No scripts**: Remove any scripts from the model
+
+### Recommended Free Models
+Search Toolbox for these terms:
+- "skibidi toilet model"
+- "among us character"
+- "roblox avatar"
+- "sigma male"
+- "meme face"
+
+---
+
+## 💰 Manual Money Collection System
+
+### How It Works
+Instead of automatic money, players must click the **Money Collector** in their base to collect earnings from their Brainrots.
+
+### Money Collector Location
+- **Yellow glowing platform** in the corner of each base
+- **Sign displays**: "💰 MONEY COLLECTOR"
+- **Shows pending amount**: "Click to collect: $XXX"
+
+### For Players
+1. Brainrots generate money over time
+2. Money accumulates (not auto-collected)
+3. Walk to the Money Collector platform
+4. Click it to collect all pending money
+5. Money is added to your balance
+
+### Advantages
+- More interactive gameplay
+- Players must manage their base
+- Creates strategic timing decisions
+- More satisfying to see money pile up
+
+---
+
+## 🔧 Advanced Customization
+
+### Changing Money Collection Rate
+Open `GameConfig.luau` and find:
+```lua
+GameConfig.MoneyCollectionInterval = 5  -- seconds between earnings
+```
+Change `5` to any number of seconds you want.
+
+### Changing Brainrot Spawn Positions
+In `BrainrotManager.luau`, adjust these values:
+```lua
+local offsetX = math.random(-20, 20)  -- Horizontal spread
+local offsetZ = math.random(-12, 12)  -- Depth spread
+```
+
+### Adding Animations to Models
+If your 3D model has animations:
+1. The model should have a Humanoid
+2. Animations will play automatically
+3. Or add custom animation IDs in BrainrotManager
+
+---
+
+## 🎵 Finding CS:GO Sounds
+
+### Where to Get CS:GO Sounds
+
+#### Option 1: Roblox Library
+1. Open Roblox Studio
+2. Toolbox → Audio
+3. Search: "cs go case opening"
+4. Search: "lootbox spin"
+5. Search: "roulette"
+6. Preview and insert into game
+
+#### Option 2: Upload Your Own
+1. Download CS:GO sounds from:
+   - YouTube (use youtube-dl)
+   - Freesound.org (search "csgo")
+   - CS:GO sound packs online
+2. Convert to MP3 (max 20MB)
+3. Upload to Roblox Create
+4. Wait for approval
+5. Use Asset ID in LootboxUI.luau
+
+### Recommended Sound Types
+
+**Spin Sound**:
+- CS:GO case spin loop
+- Roulette wheel spinning
+- Duration: 5+ seconds
+- Loopable
+
+**Stop Sound**:
+- Click/tick sound
+- Case lock sound
+- Duration: 0.5-1 second
+
+**Reveal Sound**:
+- Item drop sound
+- Success fanfare
+- Duration: 1-3 seconds
+
+**Rare Sound**:
+- Knife drop sound
+- Special item reveal
+- Duration: 2-4 seconds
+- Epic/dramatic
+
+### Popular CS:GO Sound Asset IDs
+(Search these in Roblox Toolbox):
+- "csgo case opening sound"
+- "csgo knife sound"
+- "csgo rare drop"
+
+---
+
+## 🧪 Testing Your Customizations
+
+### Test Checklist
+- [ ] All images load in lootbox animation
+- [ ] All sounds play correctly
+- [ ] 3D models spawn in base
+- [ ] Models are correct size (not too big/small)
+- [ ] Money Collector works (click to collect)
+- [ ] Pending money displays correctly
+- [ ] Brainrots don't overlap too much
+- [ ] Animation stops on correct item
+
+### Common Issues
+
+**3D Models Not Showing?**
+- Check ModelId is correct format
+- Ensure model exists in Library
+- Check model isn't private
+- Try Method 2 (ServerStorage)
+
+**Models Too Big/Small?**
+- Edit model in Studio
+- Use Scale tool
+- Resize to 2-4 studs tall
+- Re-upload to Roblox
+
+**Money Collector Not Working?**
+- Check ClickDetector exists
+- Verify MaxActivationDistance (should be 20)
+- Ensure platform is visible
+- Check server logs for errors
+
+---
+
+**Need More Help?**
+- Roblox DevForum: https://devforum.roblox.com
+- Roblox Creator Docs: https://create.roblox.com/docs
+- Tutorial Videos: Search "Roblox model customization"
+

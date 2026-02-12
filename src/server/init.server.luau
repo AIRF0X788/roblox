@@ -26,6 +26,7 @@ local UpgradeManager = require(ServerModules.UpgradeManager)
 local CollectionManager = require(ServerModules.CollectionManager)
 local LeaderboardManager = require(ServerModules.LeaderboardManager)
 local MapBuilder = require(ServerModules.MapBuilder)
+local MoneyCollectorManager = require(ServerModules.MoneyCollectorManager)
 
 ------------------------------------------------------------
 -- INITIALIZATION
@@ -76,12 +77,15 @@ local function onPlayerJoin(player: Player)
 
 	-- Spawn existing brainrots visually
 	BrainrotManager.SpawnAllBrainrots(player)
+	
+	-- Create Money Collector in base
+	MoneyCollectorManager.CreateCollector(player)
 
 	-- Start conveyor belt
 	ConveyorManager.StartConveyor(player)
 
-	-- Start money collection cycle
-	BrainrotManager.StartMoneyCollection(player)
+	-- Start income accumulation (to Money Collector, not direct)
+	MoneyCollectorManager.StartIncomeAccumulation(player)
 
 	-- Sync all data to client
 	local syncEvent = RemoteSetup.GetEvent(RemoteNames.Events.SyncAllData)
@@ -132,7 +136,8 @@ local function onPlayerLeave(player: Player)
 
 	-- Stop systems
 	ConveyorManager.StopConveyor(player)
-	BrainrotManager.StopMoneyCollection(player)
+	MoneyCollectorManager.StopIncomeAccumulation(player)
+	MoneyCollectorManager.RemoveCollector(player)
 	BrainrotManager.ClearAllBrainrots(player)
 
 	-- Save and clean data
