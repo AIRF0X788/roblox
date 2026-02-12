@@ -103,11 +103,20 @@ end
 
 local function spawnBox(player: Player)
 	local userId = player.UserId
-	if not playerConveyors[userId] then return end
-	if #playerConveyors[userId] >= GameConfig.Conveyor.MaxBoxesOnBelt then return end
+	if not playerConveyors[userId] then
+		warn("[ConveyorManager] No conveyor data for player:", player.Name)
+		return
+	end
+	if #playerConveyors[userId] >= GameConfig.Conveyor.MaxBoxesOnBelt then
+		-- Already at max boxes, skip spawn
+		return
+	end
 
 	local startPos = BaseBuilder.GetConveyorStart(player)
-	if not startPos then return end
+	if not startPos then
+		warn("[ConveyorManager] Could not get conveyor start position for player:", player.Name)
+		return
+	end
 
 	-- Pick rarity based on player's luck
 	local luckLevel = DataManager.GetLuckLevel(player)
@@ -135,6 +144,8 @@ local function spawnBox(player: Player)
 	local part = createBoxPart(boxConfig, rarity, startPos, boxId)
 	part.Parent = game.Workspace
 	boxParts[boxId] = part
+	
+	print("[ConveyorManager] Spawned box:", boxConfig.Name, "for player:", player.Name, "at position:", startPos)
 
 	-- Set up click detection for buying
 	local clickDetector = part:FindFirstChild("ClickDetector")
@@ -232,17 +243,36 @@ function ConveyorManager.StartConveyor(player: Player)
 	local userId = player.UserId
 	playerConveyors[userId] = {}
 	playerRunning[userId] = true
+	
+	print("[ConveyorManager] Starting conveyor for player:", player.Name, "UserId:", userId)
+	
+	-- Verify ConveyorStart exists
+	local startPos = BaseBuilder.GetConveyorStart(player)
+	if not startPos then
+		warn("[ConveyorManager] CRITICAL: ConveyorStart not found for player:", player.Name)
+		warn("[ConveyorManager] Conveyor cannot start without ConveyorStart marker!")
+		return
+	end
+	
+	print("[ConveyorManager] ConveyorStart verified at position:", startPos)
 
 	-- Box spawning loop
 	task.spawn(function()
+		-- Spawn first box immediately
+		task.wait(1)  -- Small delay to let base initialize
+		print("[ConveyorManager] Attempting first box spawn for player:", player.Name)
+		spawnBox(player)
+		
 		while playerRunning[userId] do
 			local conveyorLevel = DataManager.GetConveyorLevel(player)
 			local convUpgrade = GameConfig.ConveyorUpgrades[conveyorLevel]
 			local spawnMult = convUpgrade and convUpgrade.SpawnMultiplier or 1
 			local interval = GameConfig.Conveyor.SpawnInterval * spawnMult
 
-			spawnBox(player)
 			task.wait(interval)
+			if playerRunning[userId] then
+				spawnBox(player)
+			end
 		end
 	end)
 
