@@ -56,11 +56,28 @@ function BrainrotListUI.Create()
 	-- Title
 	UIBuilder.CreateLabel({
 		Name = "Title",
-		Size = UDim2.new(1, 0, 0, 35),
+		Size = UDim2.new(1, -40, 0, 35),  -- Reduced width for close button
 		Position = UDim2.new(0, 0, 0, 5),
 		Text = "🧠 MY BRAINROTS",
 		TextColor3 = Color3.fromRGB(200, 100, 255),
 		Font = Enum.Font.GothamBold,
+		Parent = panelFrame,
+	})
+
+	-- Close button (X)
+	local closeButton = UIBuilder.CreateButton({
+		Name = "CloseButton",
+		Size = UDim2.new(0, 30, 0, 30),
+		Position = UDim2.new(1, -35, 0, 5),
+		Text = "✕",
+		BackgroundColor3 = UIBuilder.Colors.AccentRed,
+		TextColor3 = Color3.fromRGB(255, 255, 255),
+		Font = Enum.Font.GothamBold,
+		CornerRadius = UDim.new(0, 6),
+		OnClick = function()
+			isPanelOpen = false
+			BrainrotListUI.TogglePanel(false)
+		end,
 		Parent = panelFrame,
 	})
 
