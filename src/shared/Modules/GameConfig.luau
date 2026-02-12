@@ -65,40 +65,44 @@ GameConfig.Rarities = {
 -- ImageId: You can replace these with your own image asset IDs
 -- Format: "rbxassetid://YOUR_IMAGE_ID"
 -- To find image IDs: Upload to Roblox, get the asset ID
+--
+-- ModelId: 3D model to spawn in player's base
+-- Search Toolbox for: "skibidi", "sigma", "brainrot", "meme character"
+-- Or use simple shapes (Sphere, Cube, etc.) with textures
 ------------------------------------------------------------
 
 GameConfig.Brainrots = {
 	-- Common brainrots
-	{ Name = "Skibidi Toilet",         Rarity = "Common",    MoneyPerCycle = 1,    ImageId = "rbxassetid://6023426926" },  -- REPLACE THIS
-	{ Name = "Baby Gronk",             Rarity = "Common",    MoneyPerCycle = 2,    ImageId = "rbxassetid://6023426926" },  -- REPLACE THIS
-	{ Name = "Grimace Shake",          Rarity = "Common",    MoneyPerCycle = 1,    ImageId = "rbxassetid://6023426926" },  -- REPLACE THIS
-	{ Name = "Ohio Rizz",              Rarity = "Common",    MoneyPerCycle = 2,    ImageId = "rbxassetid://6023426926" },  -- REPLACE THIS
+	{ Name = "Skibidi Toilet",         Rarity = "Common",    MoneyPerCycle = 1,    ImageId = "rbxassetid://6023426926",  ModelId = "rbxassetid://0" },  -- REPLACE THIS
+	{ Name = "Baby Gronk",             Rarity = "Common",    MoneyPerCycle = 2,    ImageId = "rbxassetid://6023426926",  ModelId = "rbxassetid://0" },  -- REPLACE THIS
+	{ Name = "Grimace Shake",          Rarity = "Common",    MoneyPerCycle = 1,    ImageId = "rbxassetid://6023426926",  ModelId = "rbxassetid://0" },  -- REPLACE THIS
+	{ Name = "Ohio Rizz",              Rarity = "Common",    MoneyPerCycle = 2,    ImageId = "rbxassetid://6023426926",  ModelId = "rbxassetid://0" },  -- REPLACE THIS
 
 	-- Uncommon brainrots
-	{ Name = "Sigma Boy",              Rarity = "Uncommon",  MoneyPerCycle = 5,    ImageId = "rbxassetid://6023426926" },  -- REPLACE THIS
-	{ Name = "Fanum Tax",              Rarity = "Uncommon",  MoneyPerCycle = 6,    ImageId = "rbxassetid://6023426926" },  -- REPLACE THIS
-	{ Name = "Mewing Streak",          Rarity = "Uncommon",  MoneyPerCycle = 5,    ImageId = "rbxassetid://6023426926" },  -- REPLACE THIS
+	{ Name = "Sigma Boy",              Rarity = "Uncommon",  MoneyPerCycle = 5,    ImageId = "rbxassetid://6023426926",  ModelId = "rbxassetid://0" },  -- REPLACE THIS
+	{ Name = "Fanum Tax",              Rarity = "Uncommon",  MoneyPerCycle = 6,    ImageId = "rbxassetid://6023426926",  ModelId = "rbxassetid://0" },  -- REPLACE THIS
+	{ Name = "Mewing Streak",          Rarity = "Uncommon",  MoneyPerCycle = 5,    ImageId = "rbxassetid://6023426926",  ModelId = "rbxassetid://0" },  -- REPLACE THIS
 
 	-- Rare brainrots
-	{ Name = "Gyatt Overlord",         Rarity = "Rare",      MoneyPerCycle = 15,   ImageId = "rbxassetid://6023426926" },  -- REPLACE THIS
-	{ Name = "Duke Dennis",            Rarity = "Rare",      MoneyPerCycle = 18,   ImageId = "rbxassetid://6023426926" },  -- REPLACE THIS
-	{ Name = "Livvy Dunne Rizz",       Rarity = "Rare",      MoneyPerCycle = 14,   ImageId = "rbxassetid://6023426926" },  -- REPLACE THIS
+	{ Name = "Gyatt Overlord",         Rarity = "Rare",      MoneyPerCycle = 15,   ImageId = "rbxassetid://6023426926",  ModelId = "rbxassetid://0" },  -- REPLACE THIS
+	{ Name = "Duke Dennis",            Rarity = "Rare",      MoneyPerCycle = 18,   ImageId = "rbxassetid://6023426926",  ModelId = "rbxassetid://0" },  -- REPLACE THIS
+	{ Name = "Livvy Dunne Rizz",       Rarity = "Rare",      MoneyPerCycle = 14,   ImageId = "rbxassetid://6023426926",  ModelId = "rbxassetid://0" },  -- REPLACE THIS
 
 	-- Epic brainrots
-	{ Name = "Ice Spice Cube",         Rarity = "Epic",      MoneyPerCycle = 40,   ImageId = "rbxassetid://6023426926" },  -- REPLACE THIS
-	{ Name = "Kai Cenat Clone",        Rarity = "Epic",      MoneyPerCycle = 50,   ImageId = "rbxassetid://6023426926" },  -- REPLACE THIS
-	{ Name = "Sussy Imposter",         Rarity = "Epic",      MoneyPerCycle = 45,   ImageId = "rbxassetid://6023426926" },  -- REPLACE THIS
+	{ Name = "Ice Spice Cube",         Rarity = "Epic",      MoneyPerCycle = 40,   ImageId = "rbxassetid://6023426926",  ModelId = "rbxassetid://0" },  -- REPLACE THIS
+	{ Name = "Kai Cenat Clone",        Rarity = "Epic",      MoneyPerCycle = 50,   ImageId = "rbxassetid://6023426926",  ModelId = "rbxassetid://0" },  -- REPLACE THIS
+	{ Name = "Sussy Imposter",         Rarity = "Epic",      MoneyPerCycle = 45,   ImageId = "rbxassetid://6023426926",  ModelId = "rbxassetid://0" },  -- REPLACE THIS
 
 	-- Legendary brainrots
-	{ Name = "Golden Skibidi",         Rarity = "Legendary", MoneyPerCycle = 120,  ImageId = "rbxassetid://6023426926" },  -- REPLACE THIS
-	{ Name = "CameraMan Supreme",      Rarity = "Legendary", MoneyPerCycle = 150,  ImageId = "rbxassetid://6023426926" },  -- REPLACE THIS
+	{ Name = "Golden Skibidi",         Rarity = "Legendary", MoneyPerCycle = 120,  ImageId = "rbxassetid://6023426926",  ModelId = "rbxassetid://0" },  -- REPLACE THIS
+	{ Name = "CameraMan Supreme",      Rarity = "Legendary", MoneyPerCycle = 150,  ImageId = "rbxassetid://6023426926",  ModelId = "rbxassetid://0" },  -- REPLACE THIS
 
 	-- Mythic brainrots
-	{ Name = "Titan Speakerman",       Rarity = "Mythic",    MoneyPerCycle = 400,  ImageId = "rbxassetid://6023426926" },  -- REPLACE THIS
-	{ Name = "Astro Bot Sigma",        Rarity = "Mythic",    MoneyPerCycle = 500,  ImageId = "rbxassetid://6023426926" },  -- REPLACE THIS
+	{ Name = "Titan Speakerman",       Rarity = "Mythic",    MoneyPerCycle = 400,  ImageId = "rbxassetid://6023426926",  ModelId = "rbxassetid://0" },  -- REPLACE THIS
+	{ Name = "Astro Bot Sigma",        Rarity = "Mythic",    MoneyPerCycle = 500,  ImageId = "rbxassetid://6023426926",  ModelId = "rbxassetid://0" },  -- REPLACE THIS
 
 	-- Secret brainrots
-	{ Name = "The One Piece Rizz God", Rarity = "Secret",    MoneyPerCycle = 1500, ImageId = "rbxassetid://6023426926" },  -- REPLACE THIS
+	{ Name = "The One Piece Rizz God", Rarity = "Secret",    MoneyPerCycle = 1500, ImageId = "rbxassetid://6023426926",  ModelId = "rbxassetid://0" },  -- REPLACE THIS
 }
 
 -- Build a lookup table by name for quick access
@@ -134,7 +138,7 @@ GameConfig.Boxes = {
 		Name            = "Green Crate",
 		Rarity          = "Uncommon",
 		Price           = 50,
-		BrainrotCount   = 2,
+		BrainrotCount   = 1,  -- FIXED: Only 1 Brainrot per box
 		Size            = Vector3.new(3.5, 3.5, 3.5),
 	},
 	{

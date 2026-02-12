@@ -6,6 +6,8 @@
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
+local ServerStorage = game:GetService("ServerStorage")
+local InsertService = game:GetService("InsertService")
 
 local GameConfig = require(ReplicatedStorage.Shared.Modules.GameConfig)
 local RemoteNames = require(ReplicatedStorage.Shared.Modules.RemoteNames)
@@ -38,24 +40,66 @@ function BrainrotManager.CreateBrainrotVisual(player: Player, brainrotData)
 	local offsetZ = math.random(-12, 12)
 	local position = areaCenter + Vector3.new(offsetX, 0, offsetZ)
 
-	-- Create the brainrot visual (a simple humanoid-ish shape)
-	local model = Instance.new("Model")
-	model.Name = "Brainrot_" .. brainrotData.Id
+	-- Try to load 3D model from ServerStorage first
+	local model = nil
+	local templateFolder = ServerStorage:FindFirstChild("BrainrotModels")
+	local template = templateFolder and templateFolder:FindFirstChild(brainrotData.Name)
+	
+	if template then
+		-- Use 3D model from ServerStorage
+		model = template:Clone()
+		model.Name = "Brainrot_" .. brainrotData.Id
+		
+		-- Position and configure all parts
+		if model.PrimaryPart then
+			model:SetPrimaryPartCFrame(CFrame.new(position))
+		else
+			-- If no PrimaryPart, set position of all parts
+			for _, part in ipairs(model:GetDescendants()) do
+				if part:IsA("BasePart") then
+					part.Position = position
+					part.Anchored = true
+					part.CanCollide = false
+					break  -- Position first part
+				end
+			end
+		end
+		
+		-- Anchor and disable collision for all parts
+		for _, part in ipairs(model:GetDescendants()) do
+			if part:IsA("BasePart") then
+				part.Anchored = true
+				part.CanCollide = false
+			end
+		end
+	else
+		-- Fallback: Create simple ball shape
+		model = Instance.new("Model")
+		model.Name = "Brainrot_" .. brainrotData.Id
+		
+		local body = Instance.new("Part")
+		body.Name = "Body"
+		body.Size = Vector3.new(2, 2, 2)
+		body.Position = position
+		body.Anchored = true
+		body.CanCollide = false
+		body.Shape = Enum.PartType.Ball
+		body.Color = rarityData.Color
+		body.Material = Enum.Material.SmoothPlastic
+		body.Parent = model
+		
+		model.PrimaryPart = body
+	end
+	
+	-- Get the primary body part for billboard
+	local body = model.PrimaryPart or model:FindFirstChildWhichIsA("BasePart")
+	if not body then
+		warn("[BrainrotManager] No body part found for Brainrot:", brainrotData.Name)
+		return
+	end
 
-	-- Body
-	local body = Instance.new("Part")
-	body.Name = "Body"
-	body.Size = Vector3.new(2, 2, 2)
-	body.Position = position
-	body.Anchored = true
-	body.CanCollide = false
-	body.Shape = Enum.PartType.Ball
-	body.Color = rarityData.Color
-	body.Material = Enum.Material.SmoothPlastic
-	body.Parent = model
-
-	-- Glow for higher rarities
-	if rarityData.GlowIntensity > 0 then
+	-- Glow for higher rarities (only if no existing light)
+	if rarityData.GlowIntensity > 0 and not body:FindFirstChildOfClass("PointLight") then
 		local light = Instance.new("PointLight")
 		light.Color = rarityData.Color
 		light.Brightness = rarityData.GlowIntensity * 1.5
@@ -94,19 +138,29 @@ function BrainrotManager.CreateBrainrotVisual(player: Player, brainrotData)
 	moneyLabel.Font = Enum.Font.Gotham
 	moneyLabel.Parent = billboard
 
-	-- Idle animation: gentle bobbing
+	-- Idle animation: gentle bobbing and rotation
 	task.spawn(function()
-		local startY = position.Y
+		local startCFrame = body.CFrame
 		local phase = math.random() * math.pi * 2
-		while body and body.Parent do
+		while body and body.Parent and model.Parent do
 			local t = tick() * 2 + phase
-			body.Position = Vector3.new(position.X, startY + math.sin(t) * 0.3, position.Z)
-			body.Orientation = Vector3.new(0, (t * 30) % 360, 0)
+			local bobHeight = math.sin(t) * 0.3
+			local rotation = (t * 30) % 360
+			
+			if model.PrimaryPart then
+				model:SetPrimaryPartCFrame(startCFrame * CFrame.new(0, bobHeight, 0) * CFrame.Angles(0, math.rad(rotation), 0))
+			else
+				body.CFrame = startCFrame * CFrame.new(0, bobHeight, 0) * CFrame.Angles(0, math.rad(rotation), 0)
+			end
 			task.wait(0.05)
 		end
 	end)
 
-	model.PrimaryPart = body
+	-- Ensure model has a PrimaryPart
+	if not model.PrimaryPart then
+		model.PrimaryPart = body
+	end
+	
 	model.Parent = game.Workspace.Brainrots
 
 	brainrotParts[brainrotData.Id] = model

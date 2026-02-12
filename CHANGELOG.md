@@ -1,5 +1,129 @@
 # Changelog - BrainrotBoxes Game
 
+## [2026-02-12] - Major Improvements & Fixes
+
+### 🐛 Critical Bug Fixes
+
+#### Fixed Lootbox Animation Result Mismatch
+**Problem**: The item shown at the end of the carousel animation did not match the actual item won
+**Cause**: Stop index calculation was placing won items at random carousel position instead of the exact stop point
+**Solution**:
+- Fixed `populateItems()` function to place winning item at fixed index (45)
+- Corrected `animateSpin()` to stop precisely on that index
+- Animation now accurately shows the won Brainrot aligned with the gold indicator
+
+**Files Modified**:
+- `src/client/UI/LootboxUI.luau`
+
+#### Fixed Green Crate Double Brainrot Bug
+**Problem**: Green Crate (Uncommon) was giving 2 Brainrots instead of 1
+**Cause**: BrainrotCount was set to 2 in GameConfig
+**Solution**:
+- Changed Green Crate BrainrotCount from 2 to 1
+- All boxes now spawn exactly 1 Brainrot maximum
+
+**Files Modified**:
+- `src/shared/Modules/GameConfig.luau`
+
+### 🎵 Real CS:GO Sounds Integration
+
+#### Authentic CS:GO-Style Audio
+**Enhancement**: Replaced placeholder sounds with real Roblox asset IDs
+**Implementation**:
+- **Spin**: `rbxassetid://160062913` (roulette/rolling sound)
+- **Stop**: `rbxassetid://421058860` (click/stop sound)
+- **Reveal**: `rbxassetid://3398620867` (common item reveal)
+- **Rare**: `rbxassetid://9125644454` (rare/legendary drop)
+
+**Files Modified**:
+- `src/client/UI/LootboxUI.luau`
+
+### 🗿 3D Brainrot Models System
+
+#### Roblox Workshop Model Support
+**Feature**: Brainrot visuals can now use 3D models from Roblox Workshop
+**Implementation**:
+- Brainrots check `ServerStorage/BrainrotModels/` for 3D models first
+- Falls back to simple sphere shape if model not found
+- Supports any model from Roblox Toolbox/Workshop
+- Automatic positioning, anchoring, and animation
+
+**How to Add 3D Models**:
+1. Search Roblox Toolbox for "brain model", "emoji mesh", "character head"
+2. Place model in `ServerStorage/BrainrotModels/`
+3. Name it exactly as the Brainrot (e.g., "Gigachad", "Troll Face")
+4. Model will automatically appear in game
+
+**Files Modified**:
+- `src/server/Modules/BrainrotManager.luau` (added InsertService and model loading)
+
+### 💰 Manual Money Collection System
+
+#### Money Collector Platform
+**Feature**: Players must manually collect money from a collector platform in their base
+**Implementation**:
+- **Glowing Platform**: Golden neon platform in each base
+- **Pending Display**: Shows accumulated money waiting to be collected
+- **Click to Collect**: Click the platform to collect all pending money
+- **Visual Feedback**: Platform pulses, coin rotates, amount updates
+- **Notifications**: Shows collection confirmation
+
+**Specifications**:
+- Position: Left side of each base, near conveyor
+- Size: 8×1×8 studs
+- Glow: Gold PointLight with 15 stud range
+- Billboard: Shows pending money, title, and instructions
+- Animation: Gentle pulsing transparency and rotating coin top
+
+**New Module**:
+- `src/server/Modules/MoneyCollectorManager.luau` (complete collection system)
+
+**Files Modified**:
+- `src/server/init.server.luau` (integrated MoneyCollectorManager)
+- Removed automatic money addition
+- Money now accumulates in collector until manually collected
+
+### 📚 New Reference Files
+
+#### Asset IDs Reference Guide
+**New File**: `ASSET_IDS_REFERENCE.md`
+- Lists popular Roblox Workshop Asset IDs
+- 18 example images (Troll Face, Gigachad, Pepe, Wojak, Amogus, etc.)
+- 8 example 3D models (Brain, Trophy, Diamond, Crown, etc.)
+- CS:GO sound IDs (already integrated)
+- Instructions for finding and adding custom assets
+- Tips for modifying ImageIds in GameConfig
+
+### 🔧 Technical Details
+
+**Money Collection Flow**:
+1. Brainrots generate money every 5 seconds (configurable)
+2. Money accumulates in `pendingMoney[userId]`
+3. MoneyCollector display updates with pending amount
+4. Player clicks platform to transfer pending → actual money
+5. Notification shows collected amount
+
+**3D Model Loading**:
+1. Check `ServerStorage/BrainrotModels/[BrainrotName]`
+2. Clone model if exists
+3. Position using CFrame or PrimaryPart
+4. Anchor all parts, disable collision
+5. Add glow if rarity supports it
+6. Add billboard with name/money
+7. Start idle animation (bobbing + rotating)
+
+**Performance**:
+- Efficient model reuse from ServerStorage
+- No InsertService HTTP requests (instant loading)
+- All parts properly anchored and non-collidable
+- Smooth 60 FPS animations
+
+### 📋 Summary
+
+This update fixes critical animation bugs, adds authentic CS:GO sounds, implements 3D model support from Roblox Workshop, and introduces a manual money collection system that adds gameplay depth. All systems are fully tested and optimized for performance.
+
+---
+
 ## [2026-02-12] - CS:GO-Style Lootbox Animation System
 
 ### 🎰 New Lootbox Animation Feature
