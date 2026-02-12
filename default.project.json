@@ -1,0 +1,30 @@
+{
+  "name": "roblox",
+  "tree": {
+    "$className": "DataModel",
+    
+    "ServerScriptService": {
+      "$className": "ServerScriptService",
+      "RojoScripts": {
+        "$path": "src/server"
+      }
+    },
+    
+    "ReplicatedStorage": {
+      "$className": "ReplicatedStorage",
+      "RojoModules": {
+        "$path": "src/shared"
+      }
+    },
+    
+    "StarterPlayer": {
+      "$className": "StarterPlayer",
+      "StarterPlayerScripts": {
+        "$className": "StarterPlayerScripts",
+        "RojoClientScripts": {
+          "$path": "src/client"
+        }
+      }
+    }
+  }
+}
