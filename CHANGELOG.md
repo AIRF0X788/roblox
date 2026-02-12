@@ -1,5 +1,36 @@
 # Changelog - BrainrotBoxes Game
 
+## [2026-02-12] - Complete Game World Map & Player Boundaries
+
+### 🗺️ New Map System
+
+#### Complete Game World Created
+**Feature**: Full game map with boundaries, decorations, and safety systems
+**Implementation**:
+- ✅ Main ground platform (dynamic size based on 6-player layout)
+- ✅ Border platform for visual depth
+- ✅ 4 invisible barrier walls (North, South, East, West)
+- ✅ Kill zone safety net (respawns players who fall through)
+- ✅ Zone markers for each of the 6 player bases
+- ✅ Corner pillars with golden tops and lighting
+- ✅ Central spawn platform with welcome sign
+- ✅ Professional lighting setup (Atmosphere, Bloom, Color Correction)
+
+**Map Specifications**:
+- **Size**: ~700 x 400 studs (dynamically calculated)
+- **Players Supported**: 6 players in 2x3 grid
+- **Barrier Height**: 100 studs
+- **Material**: Grass ground with slate border
+- **Lighting**: Afternoon setting with atmospheric effects
+
+**New Module**:
+- `src/server/Modules/MapBuilder.luau` (complete map management)
+
+**Files Modified**:
+- `src/server/init.server.luau` (integrated MapBuilder initialization)
+
+---
+
 ## [2026-02-12] - Critical Bug Fixes & 6-Player Support
 
 ### 🐛 Bug Fixes
@@ -58,7 +89,7 @@ Row 1: [Base 4] [Base 5] [Base 6]
 
 ### 📋 Summary
 
-This update resolves the critical texture flickering bug that affected gameplay and adds support for 6 players per server with an improved UI experience. All panels now have proper close buttons, and the base layout has been optimized for multi-player servers.
+This update includes a complete game world with proper boundaries to prevent players from falling off the map, plus the previous critical bug fixes for texture flickering and 6-player support with improved UI experience.
 
 ---
 
