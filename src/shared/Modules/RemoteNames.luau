@@ -24,6 +24,7 @@ RemoteNames.Events = {
 	UpdateLeaderboard      = "UpdateLeaderboard",
 	CollectionCompleted    = "CollectionCompleted",
 	SyncAllData            = "SyncAllData",
+	OpenLootbox            = "OpenLootbox",  -- Trigger lootbox animation
 
 	-- Client -> Server
 	RequestBuyBox          = "RequestBuyBox",

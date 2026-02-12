@@ -27,6 +27,7 @@ local CollectionUI = require(script.UI.CollectionUI)
 local BrainrotListUI = require(script.UI.BrainrotListUI)
 local NotificationUI = require(script.UI.NotificationUI)
 local LeaderboardUI = require(script.UI.LeaderboardUI)
+local LootboxUI = require(script.UI.LootboxUI)
 
 local player = Players.LocalPlayer
 
@@ -43,6 +44,7 @@ CollectionUI.Create()
 BrainrotListUI.Create()
 NotificationUI.Create()
 LeaderboardUI.Create()
+LootboxUI.Create()
 
 ------------------------------------------------------------
 -- CONNECT PLAYER STATE CALLBACKS TO UI
@@ -185,6 +187,17 @@ if updateCollectionsEvent then
 		if playerData and playerData.CollectionStatus then
 			PlayerState.CollectionStatus = playerData.CollectionStatus
 			CollectionUI.UpdateCollections(playerData.CollectionStatus)
+		end
+	end)
+end
+
+-- Lootbox animation (triggered when box is opened)
+local lootboxEvent = RemoteHelper.GetEvent(RemoteNames.Events.OpenLootbox)
+if lootboxEvent then
+	lootboxEvent.OnClientEvent:Connect(function(data)
+		-- data = {BoxName = "...", WonBrainrots = {...}}
+		if data and data.BoxName and data.WonBrainrots then
+			LootboxUI.OpenBox(data.BoxName, data.WonBrainrots)
 		end
 	end)
 end
