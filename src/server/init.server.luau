@@ -32,6 +32,14 @@ local LeaderboardManager = require(ServerModules.LeaderboardManager)
 
 print("=== BrainrotBoxes Server Starting ===")
 
+-- Create Bases folder in Workspace if it doesn't exist
+if not game.Workspace:FindFirstChild("Bases") then
+	local basesFolder = Instance.new("Folder")
+	basesFolder.Name = "Bases"
+	basesFolder.Parent = game.Workspace
+	print("[Server] Created Bases folder in Workspace")
+end
+
 -- Create all remote events/functions
 RemoteSetup.Init()
 

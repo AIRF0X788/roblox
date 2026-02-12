@@ -6,6 +6,9 @@
 	  - A conveyor belt
 	  - A brainrot display area
 	  - Visual walls/boundaries
+	
+	UPDATED: Now supports up to 6 players with optimized layout (2 rows x 3 columns)
+	FIXED: Z-fighting issues with floor textures by adjusting Y positions
 ]]
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -13,9 +16,10 @@ local GameConfig = require(ReplicatedStorage.Shared.Modules.GameConfig)
 
 local BaseBuilder = {}
 
--- Spacing between player bases
-local BASE_SPACING = 120
+-- Spacing between player bases (optimized for 6 players)
+local BASE_SPACING = 150
 local BASE_SIZE = Vector3.new(80, 1, 80)
+local MAX_PLAYERS = 6
 
 -- Track which base index is assigned to which player
 local baseAssignments = {} -- [userId] = index
@@ -31,19 +35,25 @@ function BaseBuilder.CreateBase(player: Player): Model
 	local baseIndex = nextBaseIndex
 	baseAssignments[player.UserId] = baseIndex
 
-	-- Calculate position (spread along X axis)
-	local basePosition = Vector3.new((baseIndex - 1) * BASE_SPACING, 0, 0)
+	-- Calculate position (2 rows of 3 bases for 6 players)
+	-- Row 0: bases 1, 2, 3 (indices 0, 1, 2)
+	-- Row 1: bases 4, 5, 6 (indices 3, 4, 5)
+	local row = math.floor((baseIndex - 1) / 3)
+	local col = (baseIndex - 1) % 3
+	local basePosition = Vector3.new(col * BASE_SPACING, 0, row * BASE_SPACING)
 
 	-- Create the base model
 	local baseModel = Instance.new("Model")
 	baseModel.Name = "Base_" .. player.Name
 
 	-- === FLOOR PLATFORM ===
+	-- Fixed Y position to avoid z-fighting with terrain (raised to 0)
 	local floor = Instance.new("Part")
 	floor.Name = "Floor"
 	floor.Size = BASE_SIZE
-	floor.Position = basePosition + Vector3.new(0, -0.5, 0)
+	floor.Position = basePosition + Vector3.new(0, 0, 0)  -- Changed from -0.5 to 0
 	floor.Anchored = true
+	floor.CanCollide = true
 	floor.BrickColor = BrickColor.new("Medium stone grey")
 	floor.Material = Enum.Material.SmoothPlastic
 	floor.TopSurface = Enum.SurfaceType.Smooth
@@ -51,11 +61,13 @@ function BaseBuilder.CreateBase(player: Player): Model
 	floor.Parent = baseModel
 
 	-- === SPAWN POINT ===
+	-- Raised to prevent z-fighting
 	local spawn = Instance.new("SpawnLocation")
 	spawn.Name = "SpawnPoint"
 	spawn.Size = Vector3.new(6, 1, 6)
-	spawn.Position = basePosition + Vector3.new(-25, 0.5, 25)
+	spawn.Position = basePosition + Vector3.new(-25, 1, 25)  -- Changed from 0.5 to 1
 	spawn.Anchored = true
+	spawn.CanCollide = true
 	spawn.BrickColor = BrickColor.new("Bright green")
 	spawn.Material = Enum.Material.Neon
 	spawn.TopSurface = Enum.SurfaceType.Smooth
@@ -74,17 +86,20 @@ function BaseBuilder.CreateBase(player: Player): Model
 	beltBase.Size = Vector3.new(conveyorConfig.BeltLength, 0.5, conveyorConfig.BeltWidth)
 	beltBase.Position = basePosition + Vector3.new(0, conveyorConfig.BeltHeight - 0.25, -15)
 	beltBase.Anchored = true
+	beltBase.CanCollide = true
 	beltBase.BrickColor = BrickColor.new("Dark stone grey")
 	beltBase.Material = Enum.Material.DiamondPlate
 	beltBase.TopSurface = Enum.SurfaceType.Smooth
 	beltBase.Parent = baseModel
 
 	-- Belt surface (the moving part visual - texture scroll)
+	-- Increased Y offset to prevent z-fighting with base
 	local beltSurface = Instance.new("Part")
 	beltSurface.Name = "ConveyorSurface"
 	beltSurface.Size = Vector3.new(conveyorConfig.BeltLength - 1, 0.2, conveyorConfig.BeltWidth - 0.5)
-	beltSurface.Position = basePosition + Vector3.new(0, conveyorConfig.BeltHeight + 0.1, -15)
+	beltSurface.Position = basePosition + Vector3.new(0, conveyorConfig.BeltHeight + 0.3, -15)  -- Changed from 0.1 to 0.3
 	beltSurface.Anchored = true
+	beltSurface.CanCollide = false  -- No collision for surface decoration
 	beltSurface.BrickColor = BrickColor.new("Black")
 	beltSurface.Material = Enum.Material.Fabric
 	beltSurface.TopSurface = Enum.SurfaceType.Smooth
@@ -134,11 +149,13 @@ function BaseBuilder.CreateBase(player: Player): Model
 	endMarker.Parent = baseModel
 
 	-- === BRAINROT DISPLAY AREA ===
+	-- Raised to prevent z-fighting with main floor
 	local displayFloor = Instance.new("Part")
 	displayFloor.Name = "BrainrotArea"
 	displayFloor.Size = Vector3.new(50, 0.2, 30)
-	displayFloor.Position = basePosition + Vector3.new(0, 0.1, 20)
+	displayFloor.Position = basePosition + Vector3.new(0, 0.6, 20)  -- Changed from 0.1 to 0.6
 	displayFloor.Anchored = true
+	displayFloor.CanCollide = false
 	displayFloor.BrickColor = BrickColor.new("Institutional white")
 	displayFloor.Material = Enum.Material.SmoothPlastic
 	displayFloor.Transparency = 0.7
