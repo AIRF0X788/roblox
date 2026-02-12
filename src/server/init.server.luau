@@ -25,12 +25,16 @@ local BrainrotManager = require(ServerModules.BrainrotManager)
 local UpgradeManager = require(ServerModules.UpgradeManager)
 local CollectionManager = require(ServerModules.CollectionManager)
 local LeaderboardManager = require(ServerModules.LeaderboardManager)
+local MapBuilder = require(ServerModules.MapBuilder)
 
 ------------------------------------------------------------
 -- INITIALIZATION
 ------------------------------------------------------------
 
 print("=== BrainrotBoxes Server Starting ===")
+
+-- Initialize game world/map first
+MapBuilder.InitializeWorld()
 
 -- Create Bases folder in Workspace if it doesn't exist
 if not game.Workspace:FindFirstChild("Bases") then
