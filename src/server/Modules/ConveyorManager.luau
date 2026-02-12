@@ -327,6 +327,7 @@ function ConveyorManager.TryBuyBox(player: Player, boxId: string)
 	-- Add brainrots to player
 	local spawnedBrainrots = {}
 	for _, brainrot in ipairs(brainrots) do
+		local brainrotConfig = GameConfig.BrainrotsByName[brainrot.Name]
 		local id = DataManager.AddBrainrot(player, brainrot)
 		if id then
 			table.insert(spawnedBrainrots, {
@@ -334,12 +335,25 @@ function ConveyorManager.TryBuyBox(player: Player, boxId: string)
 				Name = brainrot.Name,
 				Rarity = brainrot.Rarity,
 				MoneyPerCycle = brainrot.MoneyPerCycle,
+				ImageId = brainrotConfig and brainrotConfig.ImageId or "rbxassetid://0",
 			})
 		end
 	end
 
 	-- Remove box from belt
 	removeBox(player, boxId, "purchased")
+	
+	-- TRIGGER LOOTBOX ANIMATION before updating UI
+	local lootboxEvent = RemoteSetup.GetEvent(RemoteNames.Events.OpenLootbox)
+	if lootboxEvent then
+		lootboxEvent:FireClient(player, {
+			BoxName = targetBox.BoxName,
+			WonBrainrots = spawnedBrainrots,
+		})
+	end
+	
+	-- Small delay to let animation play (5 seconds spin + 2 seconds result display)
+	task.wait(7)
 
 	-- Update client
 	local moneyEvent = RemoteSetup.GetEvent(RemoteNames.Events.UpdateMoney)

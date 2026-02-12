@@ -61,40 +61,44 @@ GameConfig.Rarities = {
 -- BRAINROT DEFINITIONS
 -- Each brainrot belongs to a rarity and produces a certain
 -- amount of money per collection cycle.
+-- 
+-- ImageId: You can replace these with your own image asset IDs
+-- Format: "rbxassetid://YOUR_IMAGE_ID"
+-- To find image IDs: Upload to Roblox, get the asset ID
 ------------------------------------------------------------
 
 GameConfig.Brainrots = {
 	-- Common brainrots
-	{ Name = "Skibidi Toilet",         Rarity = "Common",    MoneyPerCycle = 1,    ImageId = "rbxassetid://6023426926" },
-	{ Name = "Baby Gronk",             Rarity = "Common",    MoneyPerCycle = 2,    ImageId = "rbxassetid://6023426926" },
-	{ Name = "Grimace Shake",          Rarity = "Common",    MoneyPerCycle = 1,    ImageId = "rbxassetid://6023426926" },
-	{ Name = "Ohio Rizz",              Rarity = "Common",    MoneyPerCycle = 2,    ImageId = "rbxassetid://6023426926" },
+	{ Name = "Skibidi Toilet",         Rarity = "Common",    MoneyPerCycle = 1,    ImageId = "rbxassetid://6023426926" },  -- REPLACE THIS
+	{ Name = "Baby Gronk",             Rarity = "Common",    MoneyPerCycle = 2,    ImageId = "rbxassetid://6023426926" },  -- REPLACE THIS
+	{ Name = "Grimace Shake",          Rarity = "Common",    MoneyPerCycle = 1,    ImageId = "rbxassetid://6023426926" },  -- REPLACE THIS
+	{ Name = "Ohio Rizz",              Rarity = "Common",    MoneyPerCycle = 2,    ImageId = "rbxassetid://6023426926" },  -- REPLACE THIS
 
 	-- Uncommon brainrots
-	{ Name = "Sigma Boy",              Rarity = "Uncommon",  MoneyPerCycle = 5,    ImageId = "rbxassetid://6023426926" },
-	{ Name = "Fanum Tax",              Rarity = "Uncommon",  MoneyPerCycle = 6,    ImageId = "rbxassetid://6023426926" },
-	{ Name = "Mewing Streak",          Rarity = "Uncommon",  MoneyPerCycle = 5,    ImageId = "rbxassetid://6023426926" },
+	{ Name = "Sigma Boy",              Rarity = "Uncommon",  MoneyPerCycle = 5,    ImageId = "rbxassetid://6023426926" },  -- REPLACE THIS
+	{ Name = "Fanum Tax",              Rarity = "Uncommon",  MoneyPerCycle = 6,    ImageId = "rbxassetid://6023426926" },  -- REPLACE THIS
+	{ Name = "Mewing Streak",          Rarity = "Uncommon",  MoneyPerCycle = 5,    ImageId = "rbxassetid://6023426926" },  -- REPLACE THIS
 
 	-- Rare brainrots
-	{ Name = "Gyatt Overlord",         Rarity = "Rare",      MoneyPerCycle = 15,   ImageId = "rbxassetid://6023426926" },
-	{ Name = "Duke Dennis",            Rarity = "Rare",      MoneyPerCycle = 18,   ImageId = "rbxassetid://6023426926" },
-	{ Name = "Livvy Dunne Rizz",       Rarity = "Rare",      MoneyPerCycle = 14,   ImageId = "rbxassetid://6023426926" },
+	{ Name = "Gyatt Overlord",         Rarity = "Rare",      MoneyPerCycle = 15,   ImageId = "rbxassetid://6023426926" },  -- REPLACE THIS
+	{ Name = "Duke Dennis",            Rarity = "Rare",      MoneyPerCycle = 18,   ImageId = "rbxassetid://6023426926" },  -- REPLACE THIS
+	{ Name = "Livvy Dunne Rizz",       Rarity = "Rare",      MoneyPerCycle = 14,   ImageId = "rbxassetid://6023426926" },  -- REPLACE THIS
 
 	-- Epic brainrots
-	{ Name = "Ice Spice Cube",         Rarity = "Epic",      MoneyPerCycle = 40,   ImageId = "rbxassetid://6023426926" },
-	{ Name = "Kai Cenat Clone",        Rarity = "Epic",      MoneyPerCycle = 50,   ImageId = "rbxassetid://6023426926" },
-	{ Name = "Sussy Imposter",         Rarity = "Epic",      MoneyPerCycle = 45,   ImageId = "rbxassetid://6023426926" },
+	{ Name = "Ice Spice Cube",         Rarity = "Epic",      MoneyPerCycle = 40,   ImageId = "rbxassetid://6023426926" },  -- REPLACE THIS
+	{ Name = "Kai Cenat Clone",        Rarity = "Epic",      MoneyPerCycle = 50,   ImageId = "rbxassetid://6023426926" },  -- REPLACE THIS
+	{ Name = "Sussy Imposter",         Rarity = "Epic",      MoneyPerCycle = 45,   ImageId = "rbxassetid://6023426926" },  -- REPLACE THIS
 
 	-- Legendary brainrots
-	{ Name = "Golden Skibidi",         Rarity = "Legendary", MoneyPerCycle = 120,  ImageId = "rbxassetid://6023426926" },
-	{ Name = "CameraMan Supreme",      Rarity = "Legendary", MoneyPerCycle = 150,  ImageId = "rbxassetid://6023426926" },
+	{ Name = "Golden Skibidi",         Rarity = "Legendary", MoneyPerCycle = 120,  ImageId = "rbxassetid://6023426926" },  -- REPLACE THIS
+	{ Name = "CameraMan Supreme",      Rarity = "Legendary", MoneyPerCycle = 150,  ImageId = "rbxassetid://6023426926" },  -- REPLACE THIS
 
 	-- Mythic brainrots
-	{ Name = "Titan Speakerman",       Rarity = "Mythic",    MoneyPerCycle = 400,  ImageId = "rbxassetid://6023426926" },
-	{ Name = "Astro Bot Sigma",        Rarity = "Mythic",    MoneyPerCycle = 500,  ImageId = "rbxassetid://6023426926" },
+	{ Name = "Titan Speakerman",       Rarity = "Mythic",    MoneyPerCycle = 400,  ImageId = "rbxassetid://6023426926" },  -- REPLACE THIS
+	{ Name = "Astro Bot Sigma",        Rarity = "Mythic",    MoneyPerCycle = 500,  ImageId = "rbxassetid://6023426926" },  -- REPLACE THIS
 
 	-- Secret brainrots
-	{ Name = "The One Piece Rizz God", Rarity = "Secret",    MoneyPerCycle = 1500, ImageId = "rbxassetid://6023426926" },
+	{ Name = "The One Piece Rizz God", Rarity = "Secret",    MoneyPerCycle = 1500, ImageId = "rbxassetid://6023426926" },  -- REPLACE THIS
 }
 
 -- Build a lookup table by name for quick access
