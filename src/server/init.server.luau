@@ -45,6 +45,14 @@ if not game.Workspace:FindFirstChild("Bases") then
 	print("[Server] Created Bases folder in Workspace")
 end
 
+-- Create Brainrots folder in Workspace if it doesn't exist
+if not game.Workspace:FindFirstChild("Brainrots") then
+	local brainrotsFolder = Instance.new("Folder")
+	brainrotsFolder.Name = "Brainrots"
+	brainrotsFolder.Parent = game.Workspace
+	print("[Server] Created Brainrots folder in Workspace")
+end
+
 -- Create all remote events/functions
 RemoteSetup.Init()
 
@@ -70,10 +78,25 @@ local function onPlayerJoin(player: Player)
 
 	-- Build physical base
 	local base = BaseBuilder.CreateBase(player)
+	if not base then
+		warn("[Server] Failed to create base for player:", player.Name)
+		player:Kick("Failed to create base. Please rejoin.")
+		return
+	end
 	BaseBuilder.UpdateLevelSign(player, data.BaseLevel)
 
-	-- Small delay to let client set up
-	task.wait(1)
+	-- Small delay to let base fully initialize
+	task.wait(2)
+	
+	-- Verify base exists in Workspace
+	local verifyBase = BaseBuilder.GetBase(player)
+	if not verifyBase then
+		warn("[Server] Base not found after creation for player:", player.Name)
+		player:Kick("Base initialization failed. Please rejoin.")
+		return
+	end
+	
+	print("[Server] Base verified for player:", player.Name)
 
 	-- Spawn existing brainrots visually
 	BrainrotManager.SpawnAllBrainrots(player)

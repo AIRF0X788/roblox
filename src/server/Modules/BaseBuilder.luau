@@ -272,6 +272,9 @@ function BaseBuilder.CreateBase(player: Player): Model
 	-- Set primary part and parent
 	baseModel.PrimaryPart = floor
 	baseModel.Parent = game.Workspace.Bases
+	
+	print("[BaseBuilder] Created base for player:", player.Name, "Index:", baseIndex, "Position:", basePosition)
+	print("[BaseBuilder] ConveyorStart should be at:", startMarker.Position)
 
 	return baseModel
 end

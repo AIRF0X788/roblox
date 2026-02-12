@@ -243,17 +243,36 @@ function ConveyorManager.StartConveyor(player: Player)
 	local userId = player.UserId
 	playerConveyors[userId] = {}
 	playerRunning[userId] = true
+	
+	print("[ConveyorManager] Starting conveyor for player:", player.Name, "UserId:", userId)
+	
+	-- Verify ConveyorStart exists
+	local startPos = BaseBuilder.GetConveyorStart(player)
+	if not startPos then
+		warn("[ConveyorManager] CRITICAL: ConveyorStart not found for player:", player.Name)
+		warn("[ConveyorManager] Conveyor cannot start without ConveyorStart marker!")
+		return
+	end
+	
+	print("[ConveyorManager] ConveyorStart verified at position:", startPos)
 
 	-- Box spawning loop
 	task.spawn(function()
+		-- Spawn first box immediately
+		task.wait(1)  -- Small delay to let base initialize
+		print("[ConveyorManager] Attempting first box spawn for player:", player.Name)
+		spawnBox(player)
+		
 		while playerRunning[userId] do
 			local conveyorLevel = DataManager.GetConveyorLevel(player)
 			local convUpgrade = GameConfig.ConveyorUpgrades[conveyorLevel]
 			local spawnMult = convUpgrade and convUpgrade.SpawnMultiplier or 1
 			local interval = GameConfig.Conveyor.SpawnInterval * spawnMult
 
-			spawnBox(player)
 			task.wait(interval)
+			if playerRunning[userId] then
+				spawnBox(player)
+			end
 		end
 	end)
 
