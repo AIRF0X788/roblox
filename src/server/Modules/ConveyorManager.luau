@@ -103,11 +103,20 @@ end
 
 local function spawnBox(player: Player)
 	local userId = player.UserId
-	if not playerConveyors[userId] then return end
-	if #playerConveyors[userId] >= GameConfig.Conveyor.MaxBoxesOnBelt then return end
+	if not playerConveyors[userId] then
+		warn("[ConveyorManager] No conveyor data for player:", player.Name)
+		return
+	end
+	if #playerConveyors[userId] >= GameConfig.Conveyor.MaxBoxesOnBelt then
+		-- Already at max boxes, skip spawn
+		return
+	end
 
 	local startPos = BaseBuilder.GetConveyorStart(player)
-	if not startPos then return end
+	if not startPos then
+		warn("[ConveyorManager] Could not get conveyor start position for player:", player.Name)
+		return
+	end
 
 	-- Pick rarity based on player's luck
 	local luckLevel = DataManager.GetLuckLevel(player)
@@ -135,6 +144,8 @@ local function spawnBox(player: Player)
 	local part = createBoxPart(boxConfig, rarity, startPos, boxId)
 	part.Parent = game.Workspace
 	boxParts[boxId] = part
+	
+	print("[ConveyorManager] Spawned box:", boxConfig.Name, "for player:", player.Name, "at position:", startPos)
 
 	-- Set up click detection for buying
 	local clickDetector = part:FindFirstChild("ClickDetector")
