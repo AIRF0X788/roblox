@@ -281,7 +281,17 @@ end
 ------------------------------------------------------------
 
 function BaseBuilder.GetBase(player: Player): Model?
-	return game.Workspace.Bases:FindFirstChild("Base_" .. player.Name)
+	local basesFolder = game.Workspace:FindFirstChild("Bases")
+	if not basesFolder then
+		warn("[BaseBuilder] Bases folder not found!")
+		return nil
+	end
+	
+	local base = basesFolder:FindFirstChild("Base_" .. player.Name)
+	if not base then
+		warn("[BaseBuilder] Base not found for " .. player.Name)
+	end
+	return base
 end
 
 function BaseBuilder.GetConveyorStart(player: Player): Vector3?
@@ -289,7 +299,10 @@ function BaseBuilder.GetConveyorStart(player: Player): Vector3?
 	if base then
 		local startMarker = base:FindFirstChild("ConveyorStart")
 		if startMarker then
+			print("[BaseBuilder] ✅ Found ConveyorStart for " .. player.Name .. " at " .. tostring(startMarker.Position))
 			return startMarker.Position
+		else
+			warn("[BaseBuilder] ConveyorStart marker not found in base for " .. player.Name)
 		end
 	end
 	return nil
