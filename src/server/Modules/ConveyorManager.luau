@@ -103,20 +103,31 @@ end
 
 local function spawnBox(player: Player)
 	local userId = player.UserId
+	
+	print("[ConveyorManager] 🎯 spawnBox called for: " .. player.Name)
+	
 	if not playerConveyors[userId] then 
-		warn("[ConveyorManager] No conveyor data for " .. player.Name)
+		warn("[ConveyorManager] ❌ No conveyor data for " .. player.Name)
 		return 
 	end
-	if #playerConveyors[userId] >= GameConfig.Conveyor.MaxBoxesOnBelt then 
-		print("[ConveyorManager] Belt full for " .. player.Name)
+	
+	local currentBoxCount = #playerConveyors[userId]
+	local maxBoxes = GameConfig.Conveyor.MaxBoxesOnBelt
+	
+	print("[ConveyorManager] 📊 Current boxes: " .. currentBoxCount .. "/" .. maxBoxes)
+	
+	if currentBoxCount >= maxBoxes then 
+		print("[ConveyorManager] ⚠️ Belt full for " .. player.Name)
 		return 
 	end
 
 	local startPos = BaseBuilder.GetConveyorStart(player)
 	if not startPos then 
-		warn("[ConveyorManager] ConveyorStart not found for " .. player.Name)
+		warn("[ConveyorManager] ❌ ConveyorStart not found for " .. player.Name)
 		return 
 	end
+	
+	print("[ConveyorManager] 📍 Spawn position: " .. tostring(startPos))
 
 	-- Pick rarity based on player's luck
 	local luckLevel = DataManager.GetLuckLevel(player)
@@ -124,6 +135,8 @@ local function spawnBox(player: Player)
 	local luckBoost = luckUpgrade and luckUpgrade.RarityBoost or 0
 	local rarity = GameConfig.PickRandomBoxRarity(luckBoost)
 	local boxConfig = GameConfig.GetBoxForRarity(rarity)
+
+	print("[ConveyorManager] 🎲 Picked rarity: " .. rarity .. " | Box: " .. boxConfig.Name)
 
 	local boxId = Utils.GenerateId()
 
@@ -145,7 +158,7 @@ local function spawnBox(player: Player)
 	part.Parent = game.Workspace
 	boxParts[boxId] = part
 	
-	print("[ConveyorManager] ✅ Spawned box: " .. boxConfig.Name .. " for " .. player.Name)
+	print("[ConveyorManager] ✅ Box created: " .. boxConfig.Name .. " at " .. tostring(part.Position))
 
 	-- Set up click detection for buying
 	local clickDetector = part:FindFirstChild("ClickDetector")
@@ -244,14 +257,22 @@ function ConveyorManager.StartConveyor(player: Player)
 	playerConveyors[userId] = {}
 	playerRunning[userId] = true
 
-	print("[ConveyorManager] Starting conveyor for " .. player.Name)
+	print("[ConveyorManager] 🔵 Starting conveyor for " .. player.Name)
 
 	-- Box spawning loop
 	task.spawn(function()
 		-- Wait a bit for base to be fully set up
-		task.wait(0.5)
+		task.wait(1)  -- Augmenté de 0.5 à 1 seconde
 		
-		print("[ConveyorManager] Starting spawn loop for " .. player.Name)
+		print("[ConveyorManager] 🔵 Spawn loop started for " .. player.Name)
+		
+		-- Test immédiat pour vérifier que le marker existe
+		local testStart = BaseBuilder.GetConveyorStart(player)
+		if not testStart then
+			warn("[ConveyorManager] ❌ CRITICAL: ConveyorStart not found for " .. player.Name)
+			return
+		end
+		print("[ConveyorManager] ✅ ConveyorStart found at: " .. tostring(testStart))
 		
 		while playerRunning[userId] do
 			local conveyorLevel = DataManager.GetConveyorLevel(player)
@@ -259,7 +280,10 @@ function ConveyorManager.StartConveyor(player: Player)
 			local spawnMult = convUpgrade and convUpgrade.SpawnMultiplier or 1
 			local interval = GameConfig.Conveyor.SpawnInterval * spawnMult
 
+			print("[ConveyorManager] ⏰ Attempting to spawn box for " .. player.Name)
 			spawnBox(player)
+			
+			print("[ConveyorManager] ⏳ Waiting " .. interval .. " seconds before next spawn")
 			task.wait(interval)
 		end
 	end)

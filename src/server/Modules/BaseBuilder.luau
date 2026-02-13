@@ -130,12 +130,19 @@ function BaseBuilder.CreateBase(player: Player): Model
 	local startMarker = Instance.new("Part")
 	startMarker.Name = "ConveyorStart"
 	startMarker.Size = Vector3.new(1, 3, conveyorConfig.BeltWidth + 2)
-	startMarker.Position = basePosition + Vector3.new(-conveyorConfig.BeltLength / 2, conveyorConfig.BeltHeight + 1.5, -15)
+	-- CORRECTION: Position plus précise avec calcul explicite
+	local startX = basePosition.X - (conveyorConfig.BeltLength / 2)
+	local startY = conveyorConfig.BeltHeight + 1.5
+	local startZ = basePosition.Z - 15
+	startMarker.Position = Vector3.new(startX, startY, startZ)
 	startMarker.Anchored = true
 	startMarker.BrickColor = BrickColor.new("Bright green")
 	startMarker.Material = Enum.Material.Neon
-	startMarker.Transparency = 0.5
+	startMarker.Transparency = 0.3  -- Plus visible pour debug
+	startMarker.CanCollide = false
 	startMarker.Parent = baseModel
+	
+	print("[BaseBuilder] ConveyorStart created at: " .. tostring(startMarker.Position))
 
 	-- End marker (where boxes get destroyed)
 	local endMarker = Instance.new("Part")
@@ -292,6 +299,11 @@ function BaseBuilder.GetBase(player: Player): Model?
 		warn("[BaseBuilder] Base not found for " .. player.Name)
 	end
 	return base
+end
+
+-- Alias for GetBase (used by some managers)
+function BaseBuilder.GetBaseModel(player: Player): Model?
+	return BaseBuilder.GetBase(player)
 end
 
 function BaseBuilder.GetConveyorStart(player: Player): Vector3?

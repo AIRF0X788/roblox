@@ -170,103 +170,117 @@ end
 ------------------------------------------------------------
 
 local function createItemCard(brainrot: any, index: number): Frame
-	local card = UIBuilder.CreateFrame({
-		Name = "ItemCard_" .. index,
-		Size = UDim2.new(0, ITEM_WIDTH, 0, ITEM_HEIGHT),
-		Position = UDim2.new(0, index * (ITEM_WIDTH + ITEM_SPACING), 0, 20),
-		BackgroundColor3 = UIBuilder.Colors.BackgroundLight,
-		CornerRadius = UDim.new(0, 10),
-		Parent = itemsFrame,
-	})
-	
-	-- Rarity color border
-	local rarityData = GameConfig.Rarities[brainrot.Rarity]
-	local rarityColor = rarityData and rarityData.Color or Color3.new(1, 1, 1)
-	
-	local border = Instance.new("UIStroke")
-	border.Color = rarityColor
-	border.Thickness = 3
-	border.Parent = card
-	
-	-- Image
-	local imageLabel = Instance.new("ImageLabel")
-	imageLabel.Name = "Image"
-	imageLabel.Size = UDim2.new(1, -20, 0, 80)
-	imageLabel.Position = UDim2.new(0, 10, 0, 10)
-	imageLabel.BackgroundTransparency = 1
-	imageLabel.Image = brainrot.ImageId or "rbxassetid://0"  -- Placeholder
-	imageLabel.ScaleType = Enum.ScaleType.Fit
-	imageLabel.Parent = card
-	
-	-- Name label
-	UIBuilder.CreateLabel({
-		Name = "NameLabel",
-		Size = UDim2.new(1, -10, 0, 25),
-		Position = UDim2.new(0, 5, 0, 95),
-		Text = brainrot.Name,
-		TextColor3 = rarityColor,
-		Font = Enum.Font.GothamBold,
-		TextSize = 12,
-		Parent = card,
-	})
-	
-	-- Rarity label
-	UIBuilder.CreateLabel({
-		Name = "RarityLabel",
-		Size = UDim2.new(1, -10, 0, 18),
-		Position = UDim2.new(0, 5, 1, -23),
-		Text = brainrot.Rarity,
-		TextColor3 = UIBuilder.Colors.TextMuted,
-		Font = Enum.Font.Gotham,
-		TextSize = 10,
-		Parent = card,
-	})
-	
-	return card
+    local card = UIBuilder.CreateFrame({
+        Name = "ItemCard_" .. index,
+        Size = UDim2.new(0, ITEM_WIDTH, 0, ITEM_HEIGHT),
+        Position = UDim2.new(0, (index - 1) * (ITEM_WIDTH + ITEM_SPACING), 0, 0),  -- FIXED: index - 1
+        BackgroundColor3 = UIBuilder.Colors.Panel,
+        CornerRadius = UDim.new(0, 8),
+        Parent = itemsFrame,
+    })
+    
+    -- Rarity color border
+    local rarityData = GameConfig.Rarities[brainrot.Rarity]
+    local rarityColor = rarityData and rarityData.Color or Color3.new(1, 1, 1)
+    
+    local border = Instance.new("UIStroke")
+    border.Color = rarityColor
+    border.Thickness = 3
+    border.Parent = card
+    
+    -- Image
+    local imageLabel = Instance.new("ImageLabel")
+    imageLabel.Name = "Image"
+    imageLabel.Size = UDim2.new(1, -20, 0, 80)
+    imageLabel.Position = UDim2.new(0, 10, 0, 10)
+    imageLabel.BackgroundTransparency = 1
+    imageLabel.Image = brainrot.ImageId or "rbxassetid://0"
+    imageLabel.ScaleType = Enum.ScaleType.Fit
+    imageLabel.Parent = card
+    
+    -- Name label
+    UIBuilder.CreateLabel({
+        Name = "Name",
+        Size = UDim2.new(1, -10, 0, 24),
+        Position = UDim2.new(0, 5, 0, 94),
+        Text = brainrot.Name,
+        TextScaled = true,
+        TextColor3 = UIBuilder.Colors.TextPrimary,
+        Font = Enum.Font.GothamBold,
+        Parent = card,
+    })
+    
+    -- Rarity label
+    UIBuilder.CreateLabel({
+        Name = "Rarity",
+        Size = UDim2.new(1, -10, 0, 18),
+        Position = UDim2.new(0, 5, 0, 118),
+        Text = brainrot.Rarity,
+        TextColor3 = rarityColor,
+        Font = Enum.Font.Gotham,
+        Parent = card,
+    })
+    
+    return card
 end
 
 ------------------------------------------------------------
 -- POPULATE ITEMS
 ------------------------------------------------------------
 
-local function populateItems(wonBrainrots: {any})
-	-- Clear existing items
-	for _, child in ipairs(itemsFrame:GetChildren()) do
-		if child:IsA("Frame") then
-			child:Destroy()
-		end
-	end
-	
-	-- Generate random brainrots for the carousel
-	local displayItems = {}
-	
-	-- Calculate stop position (45th item will be centered)
-	-- This ensures smooth animation and accurate landing
-	local stopIndex = 45
-	
-	-- Fill with random items
-	for i = 1, TOTAL_DISPLAY_ITEMS do
-		local randomBrainrot = GameConfig.Brainrots[math.random(1, #GameConfig.Brainrots)]
-		table.insert(displayItems, {
-			Name = randomBrainrot.Name,
-			Rarity = randomBrainrot.Rarity,
-			ImageId = randomBrainrot.ImageId,
-			MoneyPerCycle = randomBrainrot.MoneyPerCycle,
-		})
-	end
-	
-	-- Replace the item at stopIndex with the FIRST won brainrot
-	-- (For multiple brainrots, only show the first one in the animation)
-	if #wonBrainrots > 0 then
-		displayItems[stopIndex] = wonBrainrots[1]
-	end
-	
-	-- Create cards
-	for i, item in ipairs(displayItems) do
-		createItemCard(item, i - 1)
-	end
-	
-	return stopIndex  -- Return the exact index where animation will stop
+local function populateItems(wonBrainrots: {any}): number
+    -- Clear existing items
+    for _, child in ipairs(itemsFrame:GetChildren()) do
+        child:Destroy()
+    end
+    
+    -- FIXED: Stop index is the item we want centered
+    local stopIndex = 25  -- Fixed middle position (index 25 out of 50 items)
+    
+    local displayItems = {}
+    
+    -- Fill with random items
+    for i = 1, TOTAL_DISPLAY_ITEMS do
+        local randomBrainrot = GameConfig.Brainrots[math.random(1, #GameConfig.Brainrots)]
+        table.insert(displayItems, {
+            Name = randomBrainrot.Name,
+            Rarity = randomBrainrot.Rarity,
+            ImageId = randomBrainrot.ImageId,
+            MoneyPerCycle = randomBrainrot.MoneyPerCycle,
+        })
+    end
+    
+    -- CRITICAL FIX: Place the RAREST won brainrot at the EXACT stop position
+    if #wonBrainrots > 0 then
+        local rarestBrainrot = wonBrainrots[1]
+        local highestOrder = 0
+        
+        -- Find the rarest brainrot among won items
+        for _, brainrot in ipairs(wonBrainrots) do
+            local rarityData = GameConfig.Rarities[brainrot.Rarity]
+            if rarityData and rarityData.Order > highestOrder then
+                highestOrder = rarityData.Order
+                rarestBrainrot = brainrot
+            end
+        end
+        
+        -- CRITICAL FIX: Replace item at stopIndex with the winning brainrot
+        displayItems[stopIndex] = {
+            Name = rarestBrainrot.Name,
+            Rarity = rarestBrainrot.Rarity,
+            ImageId = rarestBrainrot.ImageId,
+            MoneyPerCycle = rarestBrainrot.MoneyPerCycle,
+        }
+        
+        print("[LootboxUI] 🎯 Winning item placed at index:", stopIndex, "| Item:", rarestBrainrot.Name, "| Rarity:", rarestBrainrot.Rarity)
+    end
+    
+    -- Create cards with CORRECT index
+    for i, item in ipairs(displayItems) do
+        createItemCard(item, i)
+    end
+    
+    return stopIndex
 end
 
 ------------------------------------------------------------
@@ -274,71 +288,92 @@ end
 ------------------------------------------------------------
 
 local function animateSpin(stopIndex: number, callback: () -> ())
-	isAnimating = true
-	
-	-- Calculate stop position to CENTER the winning item on the indicator line
-	local viewportCenter = viewportFrame.AbsoluteSize.X / 2
-	-- Position the stopIndex item so its CENTER aligns with the viewport center
-	local stopPosition = -(stopIndex * (ITEM_WIDTH + ITEM_SPACING) + (ITEM_WIDTH / 2)) + viewportCenter
-	
-	-- Play spin sound
-	local spinSound = playSound(SOUNDS.Spin, 0.3)
-	
-	-- Initial fast scroll
-	local startTime = tick()
-	local initialSpeed = 2000  -- Pixels per second
-	
-	local currentPos = 0
-	local targetReached = false
-	
-	-- Animation loop
-	currentConnection = RunService.RenderStepped:Connect(function()
-		local elapsed = tick() - startTime
-		
-		if elapsed >= SPIN_DURATION then
-			-- Ensure we're at exact stop position
-			itemsFrame.Position = UDim2.new(0, stopPosition, 0, 0)
-			
-			if currentConnection then
-				currentConnection:Disconnect()
-			end
-			
-			if spinSound then
-				spinSound:Stop()
-			end
-			
-			-- Play stop sound
-			playSound(SOUNDS.Stop, 0.5)
-			
-			task.wait(0.3)
-			isAnimating = false
-			targetReached = true
-			
-			if callback then
-				callback()
-			end
-			
-			return
-		end
-		
-		-- Calculate progress (0 to 1)
-		local progress = elapsed / SPIN_DURATION
-		
-		-- Ease-out cubic for smooth deceleration
-		local easedProgress = 1 - math.pow(1 - progress, 3)
-		
-		-- Interpolate from 0 to stopPosition
-		currentPos = stopPosition * easedProgress
-		
-		-- Add slight bounce effect in last 0.5 seconds
-		if elapsed > SPIN_DURATION - 0.5 and elapsed < SPIN_DURATION - 0.1 then
-			local bounceProgress = (elapsed - (SPIN_DURATION - 0.5)) / 0.4
-			local bounce = math.sin(bounceProgress * math.pi * 4) * 5 * (1 - bounceProgress)
-			currentPos = currentPos + bounce
-		end
-		
-		itemsFrame.Position = UDim2.new(0, currentPos, 0, 0)
-	end)
+    isAnimating = true
+    
+    -- FIXED: Calculate exact stop position to CENTER the winning item perfectly
+    local viewportCenter = viewportFrame.AbsoluteSize.X / 2
+    
+    -- Position calculation:
+    -- - Each item is (ITEM_WIDTH + ITEM_SPACING) pixels wide
+    -- - stopIndex is the item we want to center (1-based index)
+    -- - Item at index N starts at position (N-1) * itemTotalWidth
+    -- - To center item N: move carousel LEFT by (N-1) * itemTotalWidth
+    -- - Then adjust by viewportCenter to align with the gold line
+    -- - Final adjustment: subtract half of item width to center the item itself
+    local itemTotalWidth = ITEM_WIDTH + ITEM_SPACING
+    
+    -- CRITICAL FIX: Precise centering calculation
+    -- The item's LEFT edge is at: (stopIndex - 1) * itemTotalWidth
+    -- The item's CENTER is at: (stopIndex - 1) * itemTotalWidth + (ITEM_WIDTH / 2)
+    -- We want this center to align with viewportCenter
+    -- So we need to move itemsFrame LEFT by: itemCenter - viewportCenter
+    local itemCenter = (stopIndex - 1) * itemTotalWidth + (ITEM_WIDTH / 2)
+    local stopPosition = -(itemCenter - viewportCenter)
+    
+    print("[LootboxUI] 🎯 Animation target:")
+    print("  - Stop index:", stopIndex)
+    print("  - Viewport center:", viewportCenter)
+    print("  - Item width:", ITEM_WIDTH)
+    print("  - Item spacing:", ITEM_SPACING)
+    print("  - Item total width:", itemTotalWidth)
+    print("  - Item center position:", itemCenter)
+    print("  - Final scroll position:", stopPosition)
+    
+    -- Play spin sound
+    local spinSound = playSound(SOUNDS.Spin, 0.3)
+    
+    local startTime = tick()
+    local currentPos = 0
+    
+    -- Animation loop
+    currentConnection = RunService.RenderStepped:Connect(function()
+        local elapsed = tick() - startTime
+        
+        if elapsed >= SPIN_DURATION then
+            -- CRITICAL: Snap to EXACT final position
+            itemsFrame.Position = UDim2.new(0, stopPosition, 0, 0)
+            
+            if currentConnection then
+                currentConnection:Disconnect()
+                currentConnection = nil
+            end
+            
+            if spinSound then
+                spinSound:Stop()
+            end
+            
+            -- Play stop sound
+            playSound(SOUNDS.Stop, 0.5)
+            
+            print("[LootboxUI] ✅ Animation stopped at position:", stopPosition)
+            print("[LootboxUI] ✅ Item at index", stopIndex, "should be centered on gold line")
+            
+            task.wait(0.3)
+            isAnimating = false
+            
+            if callback then
+                callback()
+            end
+            
+            return
+        end
+        
+        -- Calculate smooth deceleration (ease-out cubic)
+        local progress = elapsed / SPIN_DURATION
+        local easedProgress = 1 - math.pow(1 - progress, 3)
+        
+        -- Interpolate position
+        currentPos = stopPosition * easedProgress
+        
+        -- Add bounce effect near the end
+        if elapsed > SPIN_DURATION - 0.5 and elapsed < SPIN_DURATION - 0.1 then
+            local bounceProgress = (elapsed - (SPIN_DURATION - 0.5)) / 0.4
+            local bounce = math.sin(bounceProgress * math.pi * 4) * 5 * (1 - bounceProgress)
+            currentPos = currentPos + bounce
+        end
+        
+        itemsFrame.Position = UDim2.new(0, currentPos, 0, 0)
+    end)
 end
 
 ------------------------------------------------------------
