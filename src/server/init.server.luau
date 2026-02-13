@@ -78,6 +78,11 @@ local function onPlayerJoin(player: Player)
 
 	-- Build physical base
 	local base = BaseBuilder.CreateBase(player)
+	if base then
+		print("[Server] ✅ Base created for " .. player.Name)
+	else
+		warn("[Server] ❌ Failed to create base for " .. player.Name)
+	end
 	BaseBuilder.UpdateLevelSign(player, data.BaseLevel)
 
 	-- Small delay to let client set up
@@ -90,6 +95,7 @@ local function onPlayerJoin(player: Player)
 	MoneyCollectorManager.CreateCollector(player)
 
 	-- Start conveyor belt
+	print("[Server] Starting conveyor for " .. player.Name)
 	ConveyorManager.StartConveyor(player)
 
 	-- Start income accumulation (to Money Collector, not direct)
