@@ -103,20 +103,11 @@ end
 
 local function spawnBox(player: Player)
 	local userId = player.UserId
-	if not playerConveyors[userId] then
-		warn("[ConveyorManager] No conveyor data for player:", player.Name)
-		return
-	end
-	if #playerConveyors[userId] >= GameConfig.Conveyor.MaxBoxesOnBelt then
-		-- Already at max boxes, skip spawn
-		return
-	end
+	if not playerConveyors[userId] then return end
+	if #playerConveyors[userId] >= GameConfig.Conveyor.MaxBoxesOnBelt then return end
 
 	local startPos = BaseBuilder.GetConveyorStart(player)
-	if not startPos then
-		warn("[ConveyorManager] Could not get conveyor start position for player:", player.Name)
-		return
-	end
+	if not startPos then return end
 
 	-- Pick rarity based on player's luck
 	local luckLevel = DataManager.GetLuckLevel(player)
@@ -144,8 +135,6 @@ local function spawnBox(player: Player)
 	local part = createBoxPart(boxConfig, rarity, startPos, boxId)
 	part.Parent = game.Workspace
 	boxParts[boxId] = part
-	
-	print("[ConveyorManager] Spawned box:", boxConfig.Name, "for player:", player.Name, "at position:", startPos)
 
 	-- Set up click detection for buying
 	local clickDetector = part:FindFirstChild("ClickDetector")
@@ -243,29 +232,17 @@ function ConveyorManager.StartConveyor(player: Player)
 	local userId = player.UserId
 	playerConveyors[userId] = {}
 	playerRunning[userId] = true
-	
-	print("[ConveyorManager] Starting conveyor for player:", player.Name, "UserId:", userId)
 
 	-- Box spawning loop
 	task.spawn(function()
-		-- Wait for base to fully initialize
-		task.wait(2)
-		
-		print("[ConveyorManager] Starting box spawn loop for player:", player.Name)
-		
-		-- Spawn first box
-		spawnBox(player)
-		
 		while playerRunning[userId] do
 			local conveyorLevel = DataManager.GetConveyorLevel(player)
 			local convUpgrade = GameConfig.ConveyorUpgrades[conveyorLevel]
 			local spawnMult = convUpgrade and convUpgrade.SpawnMultiplier or 1
 			local interval = GameConfig.Conveyor.SpawnInterval * spawnMult
 
+			spawnBox(player)
 			task.wait(interval)
-			if playerRunning[userId] then
-				spawnBox(player)
-			end
 		end
 	end)
 
