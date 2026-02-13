@@ -85,18 +85,8 @@ local function onPlayerJoin(player: Player)
 	end
 	BaseBuilder.UpdateLevelSign(player, data.BaseLevel)
 
-	-- Small delay to let base fully initialize
-	task.wait(2)
-	
-	-- Verify base exists in Workspace
-	local verifyBase = BaseBuilder.GetBase(player)
-	if not verifyBase then
-		warn("[Server] Base not found after creation for player:", player.Name)
-		player:Kick("Base initialization failed. Please rejoin.")
-		return
-	end
-	
-	print("[Server] Base verified for player:", player.Name)
+	-- Small delay to let base initialize
+	task.wait(1)
 
 	-- Spawn existing brainrots visually
 	BrainrotManager.SpawnAllBrainrots(player)
