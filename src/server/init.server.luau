@@ -78,14 +78,9 @@ local function onPlayerJoin(player: Player)
 
 	-- Build physical base
 	local base = BaseBuilder.CreateBase(player)
-	if not base then
-		warn("[Server] Failed to create base for player:", player.Name)
-		player:Kick("Failed to create base. Please rejoin.")
-		return
-	end
 	BaseBuilder.UpdateLevelSign(player, data.BaseLevel)
 
-	-- Small delay to let base initialize
+	-- Small delay to let client set up
 	task.wait(1)
 
 	-- Spawn existing brainrots visually
